@@ -7,15 +7,14 @@ import (
 	"net"
 	"regexp"
 
+	"github.com/admpub/ddns/store"
 	"github.com/webx-top/echo"
-	"github.com/webx-top/echo/defaults"
-	"github.com/webx-top/echo/engine/standard"
 )
 
-func RunWebService(conn *RedisConnection) {
+func RunWebService(stor store.Storer, e echo.RouteRegister) {
 	t := BuildTemplate()
 
-	defaults.Get("/", func(c echo.Context) error {
+	e.Get("/", func(c echo.Context) error {
 		buf := new(bytes.Buffer)
 		err := t.Execute(buf, echo.H{"domain": DdnsDomain})
 		if err != nil {
@@ -24,31 +23,31 @@ func RunWebService(conn *RedisConnection) {
 		return c.HTML(buf.String())
 	})
 
-	defaults.Get("/available/:hostname", func(c echo.Context) error {
+	e.Get("/available/:hostname", func(c echo.Context) error {
 		hostname, valid := ValidHostname(c.Param("hostname"))
 
 		return c.JSON(echo.H{
-			"available": valid && !conn.HostExist(hostname),
+			"available": valid && !stor.HostExist(hostname),
 		})
 	})
 
-	defaults.Get("/new/:hostname", func(c echo.Context) error {
+	e.Get("/new/:hostname", func(c echo.Context) error {
 		hostname, valid := ValidHostname(c.Param("hostname"))
 
 		if !valid {
 			return c.JSON(echo.H{"error": "This hostname is not valid"}, 404)
 		}
 
-		if conn.HostExist(hostname) {
+		if stor.HostExist(hostname) {
 			return c.JSON(echo.H{
 				"error": "This hostname has already been registered.",
 			}, 403)
 		}
 
-		host := &Host{Hostname: hostname, IP: "127.0.0.1"}
+		host := &store.Host{Hostname: hostname, IP: "127.0.0.1"}
 		host.GenerateAndSetToken()
 
-		conn.SaveHost(host)
+		stor.SaveHost(host)
 
 		return c.JSON(echo.H{
 			"hostname":    host.Hostname,
@@ -57,7 +56,7 @@ func RunWebService(conn *RedisConnection) {
 		})
 	})
 
-	defaults.Get("/update/:hostname/:token", func(c echo.Context) error {
+	e.Get("/update/:hostname/:token", func(c echo.Context) error {
 		hostname, valid := ValidHostname(c.Param("hostname"))
 		token := c.Param("token")
 
@@ -65,13 +64,13 @@ func RunWebService(conn *RedisConnection) {
 			return c.JSON(echo.H{"error": "This hostname is not valid"}, 404)
 		}
 
-		if !conn.HostExist(hostname) {
+		if !stor.HostExist(hostname) {
 			return c.JSON(echo.H{
 				"error": "This hostname has not been registered or is expired.",
 			}, 404)
 		}
 
-		host := conn.GetHost(hostname)
+		host := stor.GetHost(hostname)
 
 		if host.Token != token {
 			return c.JSON(echo.H{
@@ -87,7 +86,7 @@ func RunWebService(conn *RedisConnection) {
 		}
 
 		host.IP = ip
-		conn.SaveHost(host)
+		stor.SaveHost(host)
 
 		return c.JSON(echo.H{
 			"current_ip": ip,
@@ -95,7 +94,6 @@ func RunWebService(conn *RedisConnection) {
 		})
 	})
 
-	defaults.Run(standard.New(DdnsWebListenSocket))
 }
 
 // GetRemoteAddr Get the Remote Address of the client. At First we try to get the
@@ -114,7 +112,7 @@ func GetRemoteAddr(c echo.Context) (string, error) {
 //BuildTemplate Get index template from bindata
 func BuildTemplate() *template.Template {
 	html, err := template.New("index.html").Parse(indexTemplate)
-	HandleErr(err)
+	store.HandleErr(err)
 
 	return html
 }

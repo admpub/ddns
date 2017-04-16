@@ -109,7 +109,7 @@ const indexTemplate string = `
             <div class="header">
                 <ul class="nav nav-pills pull-right">
                     <li class="active"><a href="#">Home</a></li>
-                    <li><a href="https://github.com/pboehm/ddns">
+                    <li><a href="https://github.com/admpub/ddns">
                         <i class="fa fa-github fa-lg"></i> Code</a></li>
                 </ul>
                 <h3 class="text-muted">DDNS</h3>
@@ -168,7 +168,7 @@ const indexTemplate string = `
             function validate() {
                 var hostname = $('#hostname').val();
 
-                $.getJSON("/available/" + hostname + "/", function( data ) {
+                $.getJSON("/available/" + hostname, function( data ) {
                     if (data.available) {
                         isValid();
                     } else {
@@ -188,7 +188,7 @@ const indexTemplate string = `
                 $('#register').click(function() {
                     var hostname = $("#hostname").val();
 
-                    $.getJSON("/new/" + hostname + "/", function( data ) {
+                    $.getJSON("/new/" + hostname, function( data ) {
                         console.log(data);
 
                         var host = location.protocol + '//' + location.host;

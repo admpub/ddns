@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/admpub/ddns/store"
 )
 
 type responder func()
@@ -20,7 +22,7 @@ func respondWithEND() {
 
 //RunBackend This function implements the PowerDNS-Pipe-Backend protocol and generates
 // the response data it possible
-func RunBackend(conn *RedisConnection) {
+func RunBackend(stor store.Storer) {
 	bio := bufio.NewReader(os.Stdin)
 
 	// handshake with PowerDNS
@@ -34,11 +36,11 @@ func RunBackend(conn *RedisConnection) {
 			continue
 		}
 
-		HandleRequest(string(line), conn)()
+		HandleRequest(string(line), stor)()
 	}
 }
 
-func HandleRequest(line string, conn *RedisConnection) responder {
+func HandleRequest(line string, stor store.Storer) responder {
 	if Verbose {
 		fmt.Printf("LOG\t'%s'\n", line)
 	}
@@ -72,11 +74,11 @@ func HandleRequest(line string, conn *RedisConnection) responder {
 			hostname = queryName[:len(queryName)-len(DdnsDomain)]
 		}
 
-		if hostname == "" || !conn.HostExist(hostname) {
+		if hostname == "" || !stor.HostExist(hostname) {
 			return respondWithFAIL
 		}
 
-		host := conn.GetHost(hostname)
+		host := stor.GetHost(hostname)
 		response = host.IP
 
 		record = "A"
