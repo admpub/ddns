@@ -3,3 +3,4 @@ pdns.conf
 pdns_backend.py
 ddns
 dump.rdb
+/*.exe

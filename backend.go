@@ -18,7 +18,7 @@ func respondWithEND() {
 	fmt.Printf("END\n")
 }
 
-// This function implements the PowerDNS-Pipe-Backend protocol and generates
+//RunBackend This function implements the PowerDNS-Pipe-Backend protocol and generates
 // the response data it possible
 func RunBackend(conn *RedisConnection) {
 	bio := bufio.NewReader(os.Stdin)
@@ -48,15 +48,15 @@ func HandleRequest(line string, conn *RedisConnection) responder {
 		return respondWithFAIL
 	}
 
-	query_name := parts[1]
-	query_class := parts[2]
-	query_type := parts[3]
-	query_id := parts[4]
+	queryName := parts[1]
+	queryClass := parts[2]
+	queryType := parts[3]
+	queryID := parts[4]
 
 	var response, record string
-	record = query_type
+	record = queryType
 
-	switch query_type {
+	switch queryType {
 	case "SOA":
 		response = fmt.Sprintf("%s. hostmaster.example.com. %d 1800 3600 7200 5",
 			DdnsSoaFqdn, getSoaSerial())
@@ -67,9 +67,9 @@ func HandleRequest(line string, conn *RedisConnection) responder {
 	case "A":
 	case "ANY":
 		// get the host part of the fqdn: pi.d.example.org -> pi
-		hostname := ""
-		if strings.HasSuffix(query_name, DdnsDomain) {
-			hostname = query_name[:len(query_name)-len(DdnsDomain)]
+		var hostname string
+		if strings.HasSuffix(queryName, DdnsDomain) {
+			hostname = queryName[:len(queryName)-len(DdnsDomain)]
 		}
 
 		if hostname == "" || !conn.HostExist(hostname) {
@@ -77,7 +77,7 @@ func HandleRequest(line string, conn *RedisConnection) responder {
 		}
 
 		host := conn.GetHost(hostname)
-		response = host.Ip
+		response = host.IP
 
 		record = "A"
 		if !host.IsIPv4() {
@@ -89,7 +89,7 @@ func HandleRequest(line string, conn *RedisConnection) responder {
 	}
 
 	fmt.Printf("DATA\t%s\t%s\t%s\t10\t%s\t%s\n",
-		query_name, query_class, record, query_id, response)
+		queryName, queryClass, record, queryID, response)
 	return respondWithEND
 }
 

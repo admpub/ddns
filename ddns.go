@@ -77,7 +77,7 @@ func main() {
 
 	switch cmd {
 	case CmdBackend:
-		log.Printf("Starting PDNS Backend\n")
+		log.Printf("Starting DDNS Backend\n")
 		RunBackend(conn)
 	case CmdWeb:
 		log.Printf("Starting Web Service\n")

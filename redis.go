@@ -3,9 +3,10 @@ package main
 import (
 	"crypto/sha1"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
 	"strings"
 	"time"
+
+	"github.com/garyburd/redigo/redis"
 )
 
 const HostExpirationSeconds int = 10 * 24 * 60 * 60 // 10 Days
@@ -78,7 +79,7 @@ func (self *RedisConnection) HostExist(name string) bool {
 
 type Host struct {
 	Hostname string `redis:"-"`
-	Ip       string `redis:"ip"`
+	IP       string `redis:"ip"`
 	Token    string `redis:"token"`
 }
 
@@ -90,9 +91,9 @@ func (self *Host) GenerateAndSetToken() {
 	self.Token = fmt.Sprintf("%x", hash.Sum(nil))
 }
 
-// Returns true when this host has a IPv4 Address and false if IPv6
+//IsIPv4 Returns true when this host has a IPv4 Address and false if IPv6
 func (self *Host) IsIPv4() bool {
-	if strings.Contains(self.Ip, ".") {
+	if strings.Contains(self.IP, ".") {
 		return true
 	}
 

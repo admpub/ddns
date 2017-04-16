@@ -10,8 +10,8 @@ const indexTemplate string = `
         <title>DDNS</title>
 
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.1.0/css/font-awesome.min.css">
 
         <!-- Optional theme -->
         <style type="text/css" media="all">
@@ -147,9 +147,9 @@ const indexTemplate string = `
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
         <script type="text/javascript" charset="utf-8">
 
