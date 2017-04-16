@@ -76,3 +76,8 @@ func (self *RedisConnection) HostExist(name string) bool {
 
 	return exists
 }
+
+func (self *RedisConnection) HostToken(host *store.Host) string {
+	host.GenerateAndSetToken()
+	return host.Token
+}

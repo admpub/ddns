@@ -5,3 +5,4 @@ ddns
 dump.rdb
 /*.exe
 /*.exe~
+/.vscode

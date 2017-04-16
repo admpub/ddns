@@ -45,8 +45,7 @@ func RunWebService(stor store.Storer, e echo.RouteRegister) {
 		}
 
 		host := &store.Host{Hostname: hostname, IP: "127.0.0.1"}
-		host.GenerateAndSetToken()
-
+		stor.HostToken(host)
 		stor.SaveHost(host)
 
 		return c.JSON(echo.H{

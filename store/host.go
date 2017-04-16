@@ -13,9 +13,13 @@ type Host struct {
 	Token    string `redis:"token"`
 }
 
-func (self *Host) GenerateAndSetToken() {
+func (self *Host) GenerateAndSetToken(key ...string) {
 	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%d", time.Now().UnixNano())))
+	if len(key) > 0 && len(key[0]) > 0 {
+		hash.Write([]byte(key[0]))
+	} else {
+		hash.Write([]byte(fmt.Sprintf("%d", time.Now().UnixNano())))
+	}
 	hash.Write([]byte(self.Hostname))
 
 	self.Token = fmt.Sprintf("%x", hash.Sum(nil))
