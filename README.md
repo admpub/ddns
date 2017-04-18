@@ -33,7 +33,7 @@ You should have a working Go environment (correct `$GOPATH`).
 
 Then install `ddns` via:
 
-    $ go get github.com/pboehm/ddns
+    $ go get github.com/admpub/ddns
     $ ls $GOPATH/bin/ddns # the displayed path will be used later
     /home/user/gocode/bin/ddns
 
@@ -50,11 +50,11 @@ host.
     $ sudo vim /etc/powerdns/pdns.d/pipe.conf
 
 `pipe.conf` should have the following content. Please adjust the path of `ddns`
-and the values supplied to `--domain` and `--soa_fqdn`:
+and the values supplied to `--domain` and `--fqdn`:
 
     launch=pipe
     pipebackend-abi-version=1
-    pipe-command=/home/user/gocode/bin/ddns --soa_fqdn=dns.example.com --domain=sub.example.com backend
+    pipe-command=/home/user/gocode/bin/ddns --fqdn=dns.example.com --domain=sub.example.com --mode=backend
 
 Then restart `pdns`:
 
@@ -76,7 +76,7 @@ Create a supervisor config file for ddns:
     [program:ddns]
     directory = /tmp/
     user = user
-    command = /home/user/gocode/bin/ddns --domain=sub.example.com web
+    command = /home/user/gocode/bin/ddns --domain=sub.example.com --mode=web
     autostart = True
     autorestart = True
     redirect_stderr = True
